@@ -370,14 +370,9 @@ class M3SelectorBase(ABC):
         # 按评分排序
         results.sort(key=lambda x: x['score'], reverse=True)
         
-        # 默认不过滤数量，所有通过筛选的都输出到M4
-        # 单币互斥限制也移除，让M4做最终决定
-        if self.top_n is None:
-            self.logger.info(f"M3.{self.timeframe}: all {len(results)} passed pairs go to M4")
-            return results
-        
-        # 如果设置了top_n，才进行数量和单币互斥限制
-        top_n = []
+        # 单币互斥限制：每个币种最多出现在1个配对中（最严格模式）
+        MAX_SYMBOL_APPEARANCE = 1  # 用户设定：单币最多1个配对
+        filtered = []
         coin_counts = {}
         
         for r in results:
@@ -386,13 +381,14 @@ class M3SelectorBase(ABC):
             cnt_a = coin_counts.get(a, 0)
             cnt_b = coin_counts.get(b, 0)
             
-            if cnt_a < 3 and cnt_b < 3:
-                top_n.append(r)
+            if cnt_a < MAX_SYMBOL_APPEARANCE and cnt_b < MAX_SYMBOL_APPEARANCE:
+                filtered.append(r)
                 coin_counts[a] = cnt_a + 1
                 coin_counts[b] = cnt_b + 1
                 
-                if len(top_n) >= self.top_n:
+                # 如果设置了top_n，达到数量后停止
+                if self.top_n is not None and len(filtered) >= self.top_n:
                     break
         
-        self.logger.info(f"M3.{self.timeframe}: selected top {len(top_n)} pairs")
-        return top_n
+        self.logger.info(f"M3.{self.timeframe}: {len(filtered)}/{len(results)} pairs after symbol mutual-exclusion (max {MAX_SYMBOL_APPEARANCE} per symbol)")
+        return filtered
