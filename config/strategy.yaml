@@ -1,0 +1,19 @@
+system:
+  name: "S001-Pro"
+  version: "2.0-CleanSlate"
+  mode: "live"
+  log_level: "INFO"
+
+exchange:
+  name: "binance"
+  api_key: "0cmx1MUjUpuMmZ3OFCAh6QCTWdPHKrs8unwwWVp6phRxRuLGry4zENOWlEZMeDiM"
+  secret_key: "ofeKKmTUqUzvzwNsAUuoOvplkFOpsgjtdgf4ptI1pMwNnsqZRiLRaBA9dVcf6JGr"
+  testnet: false
+
+data:
+  db_path: "data/klines.db"
+
+notifications:
+  enabled: true
+  telegram_token: "8707367889:AAHNXkiRqdRDROJpaSeNKodZuDArmLSdFME"
+  telegram_chat_id: "7507264354"

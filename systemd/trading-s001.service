@@ -1,0 +1,26 @@
+[Unit]
+Description=S001-Pro Statistical Arbitrage Bot
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/strategies/S001-Pro
+Environment=PYTHONPATH=/home/ubuntu/strategies/S001-Pro
+Environment=PYTHONUNBUFFERED=1
+
+# 启动前自动清理残留状态
+ExecStartPre=/bin/sh -c 'echo "{}" > /home/ubuntu/strategies/S001-Pro/data/state.json'
+
+# 实盘模式：移除 --dry-run，添加 --mode full
+ExecStart=/home/ubuntu/strategies/S001-Pro/venv/bin/python -u -m src.main --mode full
+
+Restart=always
+RestartSec=10
+
+# 资源限制
+LimitNOFILE=65535
+MemoryMax=2G
+
+[Install]
+WantedBy=multi-user.target

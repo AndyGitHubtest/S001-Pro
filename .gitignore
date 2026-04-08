@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+data/*.db
+data/*.json
+logs/
+config/pairs_v2.json
+config/*.tmp
+.env
+config/base.yaml
+.idea/
+venv/
+*.egg-info/
+__pycache__
+data/state.json

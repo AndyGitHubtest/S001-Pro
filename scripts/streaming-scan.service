@@ -1,0 +1,27 @@
+[Unit]
+Description=S001-Pro Streaming Scanner (流式滚动扫描)
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/strategies/S001-Pro
+
+Environment=PYTHONPATH=/home/ubuntu/strategies/S001-Pro
+EnvironmentFile=/home/ubuntu/strategies/S001-Pro/.env
+
+ExecStart=/home/ubuntu/strategies/S001-Pro/venv/bin/python -m src.streaming_integration --telegram --token ${TELEGRAM_BOT_TOKEN} --chat ${TELEGRAM_CHAT_ID}
+
+Restart=always
+RestartSec=60
+
+# 资源限制
+MemoryLimit=2G
+CPUQuota=200%
+
+# 日志
+StandardOutput=append:/home/ubuntu/strategies/S001-Pro/logs/streaming_scan.log
+StandardError=append:/home/ubuntu/strategies/S001-Pro/logs/streaming_scan.log
+
+[Install]
+WantedBy=multi-user.target

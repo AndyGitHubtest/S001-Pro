@@ -1,0 +1,460 @@
+{
+  "meta": {
+    "version": "2.0-streaming",
+    "pairs_count": 30,
+    "generated_at": "2026-04-08T17:17:56.786830",
+    "scanner": "StreamingScanner"
+  },
+  "pairs": [
+    {
+      "symbol_a": "1000SHIB/USDT:USDT",
+      "symbol_b": "1000FLOKI/USDT:USDT",
+      "beta": 1.423637543939979,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9952456618685209,
+      "metrics": {
+        "corr": 0.9936474307784917,
+        "r2": 0.987335216695592,
+        "adf_tstat": -4.925327894483265,
+        "pf": 8.613907412998595
+      }
+    },
+    {
+      "symbol_a": "LTC/USDT:USDT",
+      "symbol_b": "LINK/USDT:USDT",
+      "beta": 2.1645273074266247,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9951998751301616,
+      "metrics": {
+        "corr": 0.9935861208911536,
+        "r2": 0.9872133796294928,
+        "adf_tstat": -4.998647709132663,
+        "pf": 5.876526121998048
+      }
+    },
+    {
+      "symbol_a": "GALA/USDT:USDT",
+      "symbol_b": "INJ/USDT:USDT",
+      "beta": 0.7088285423234919,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9942744527940275,
+      "metrics": {
+        "corr": 0.9923464112509277,
+        "r2": 0.9847513999251825,
+        "adf_tstat": -9.519807979161456,
+        "pf": 4.100977921135194
+      }
+    },
+    {
+      "symbol_a": "GALA/USDT:USDT",
+      "symbol_b": "OP/USDT:USDT",
+      "beta": 0.9256303698081276,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9939769822167432,
+      "metrics": {
+        "corr": 0.9919476964241668,
+        "r2": 0.9839602324428064,
+        "adf_tstat": -9.488901666486349,
+        "pf": 12.854856348814902
+      }
+    },
+    {
+      "symbol_a": "BTC/USDT:USDT",
+      "symbol_b": "LTC/USDT:USDT",
+      "beta": 0.7046123417663128,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9935900823940786,
+      "metrics": {
+        "corr": 0.9914289555871848,
+        "r2": 0.9829313739891297,
+        "adf_tstat": -4.869807504643514,
+        "pf": 2.6279256551419476
+      }
+    },
+    {
+      "symbol_a": "AVAX/USDT:USDT",
+      "symbol_b": "SAND/USDT:USDT",
+      "beta": 0.7354061504943409,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9931877414958508,
+      "metrics": {
+        "corr": 0.9908893204997892,
+        "r2": 0.9818616454836137,
+        "adf_tstat": -7.1471423349053875,
+        "pf": 5.085616929564011
+      }
+    },
+    {
+      "symbol_a": "ETH/USDT:USDT",
+      "symbol_b": "INJ/USDT:USDT",
+      "beta": 0.8862652857124672,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9927106226243371,
+      "metrics": {
+        "corr": 0.9902491370552963,
+        "r2": 0.980593353442052,
+        "adf_tstat": -5.755712572146602,
+        "pf": 7.933938434610058
+      }
+    },
+    {
+      "symbol_a": "ADA/USDT:USDT",
+      "symbol_b": "SAND/USDT:USDT",
+      "beta": 0.8703330512766378,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9926702612783227,
+      "metrics": {
+        "corr": 0.9901949688245419,
+        "r2": 0.980486076288749,
+        "adf_tstat": -6.8432565296365695,
+        "pf": 4.396798410308557
+      }
+    },
+    {
+      "symbol_a": "LINK/USDT:USDT",
+      "symbol_b": "INJ/USDT:USDT",
+      "beta": 0.9411607976853523,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9922509082013837,
+      "metrics": {
+        "corr": 0.9896320461113993,
+        "r2": 0.9793715866941355,
+        "adf_tstat": -5.916785594912909,
+        "pf": 6.32723980529975
+      }
+    },
+    {
+      "symbol_a": "XRP/USDT:USDT",
+      "symbol_b": "INJ/USDT:USDT",
+      "beta": 1.175128150056952,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9921324849450507,
+      "metrics": {
+        "corr": 0.9894730409700772,
+        "r2": 0.9790568988101256,
+        "adf_tstat": -5.918889580003337,
+        "pf": 4.3835844102011015
+      }
+    },
+    {
+      "symbol_a": "UNI/USDT:USDT",
+      "symbol_b": "LDO/USDT:USDT",
+      "beta": 1.1643886889919772,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9916119324061234,
+      "metrics": {
+        "corr": 0.9887739014439343,
+        "r2": 0.9776738281805594,
+        "adf_tstat": -4.006839528608036,
+        "pf": 6.0462445447120645
+      }
+    },
+    {
+      "symbol_a": "XRP/USDT:USDT",
+      "symbol_b": "DOT/USDT:USDT",
+      "beta": 1.404015929249233,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.991435208123373,
+      "metrics": {
+        "corr": 0.9885364733491709,
+        "r2": 0.9772043591443211,
+        "adf_tstat": -4.217114647501356,
+        "pf": 4.308019055879906
+      }
+    },
+    {
+      "symbol_a": "LINK/USDT:USDT",
+      "symbol_b": "AAVE/USDT:USDT",
+      "beta": 1.178575688085557,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9911364844189597,
+      "metrics": {
+        "corr": 0.9881350535731942,
+        "r2": 0.9764108841026446,
+        "adf_tstat": -5.679202079040804,
+        "pf": 6.4885020902845305
+      }
+    },
+    {
+      "symbol_a": "XRP/USDT:USDT",
+      "symbol_b": "AAVE/USDT:USDT",
+      "beta": 1.471766523449676,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9911199908854395,
+      "metrics": {
+        "corr": 0.9881128866921379,
+        "r2": 0.9763670768496199,
+        "adf_tstat": -5.829145631489878,
+        "pf": 8.302988268329399
+      }
+    },
+    {
+      "symbol_a": "AVAX/USDT:USDT",
+      "symbol_b": "SUI/USDT:USDT",
+      "beta": 1.0322572162626997,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9906165028524003,
+      "metrics": {
+        "corr": 0.9874360528800774,
+        "r2": 0.9750299585295241,
+        "adf_tstat": -4.762040196480386,
+        "pf": 7.211918776776977
+      }
+    },
+    {
+      "symbol_a": "SAND/USDT:USDT",
+      "symbol_b": "GALA/USDT:USDT",
+      "beta": 1.3823623236156108,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9904362047036959,
+      "metrics": {
+        "corr": 0.9871936050200658,
+        "r2": 0.9745512137947174,
+        "adf_tstat": -7.4692538502925725,
+        "pf": 4.60440406420504
+      }
+    },
+    {
+      "symbol_a": "AVAX/USDT:USDT",
+      "symbol_b": "1000FLOKI/USDT:USDT",
+      "beta": 0.6312016019481035,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9901511224133326,
+      "metrics": {
+        "corr": 0.9868101727010546,
+        "r2": 0.9737943169522758,
+        "adf_tstat": -5.47194757427742,
+        "pf": 12.360341057455091
+      }
+    },
+    {
+      "symbol_a": "DASH/USDT:USDT",
+      "symbol_b": "ZEN/USDT:USDT",
+      "beta": 0.759151309831179,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9901351455106967,
+      "metrics": {
+        "corr": 0.9867886810297322,
+        "r2": 0.9737519010130545,
+        "adf_tstat": -6.516614608904495,
+        "pf": 5.614925227682443
+      }
+    },
+    {
+      "symbol_a": "ATOM/USDT:USDT",
+      "symbol_b": "VET/USDT:USDT",
+      "beta": 1.2922087938547064,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9901089988726972,
+      "metrics": {
+        "corr": 0.9867535086509667,
+        "r2": 0.9736824868398224,
+        "adf_tstat": -5.090920814132636,
+        "pf": 3.359167743803262
+      }
+    },
+    {
+      "symbol_a": "AVAX/USDT:USDT",
+      "symbol_b": "INJ/USDT:USDT",
+      "beta": 0.7322702067034111,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9898778785305361,
+      "metrics": {
+        "corr": 0.9864425700704261,
+        "r2": 0.9730689440517182,
+        "adf_tstat": -5.139099025963001,
+        "pf": 4.353316610669095
+      }
+    },
+    {
+      "symbol_a": "ADA/USDT:USDT",
+      "symbol_b": "1000FLOKI/USDT:USDT",
+      "beta": 0.7472231122366837,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9898464211878064,
+      "metrics": {
+        "corr": 0.9864002437920453,
+        "r2": 0.9729854409591806,
+        "adf_tstat": -5.396359793435448,
+        "pf": 4.97006078277767
+      }
+    },
+    {
+      "symbol_a": "AVAX/USDT:USDT",
+      "symbol_b": "APE/USDT:USDT",
+      "beta": 0.8092809643838433,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9896985955859421,
+      "metrics": {
+        "corr": 0.9862013263148307,
+        "r2": 0.9725930560289379,
+        "adf_tstat": -5.919436600695673,
+        "pf": 4.249672495550215
+      }
+    },
+    {
+      "symbol_a": "VET/USDT:USDT",
+      "symbol_b": "GALA/USDT:USDT",
+      "beta": 1.435763629645235,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9896801159898536,
+      "metrics": {
+        "corr": 0.9861764578800989,
+        "r2": 0.9725440060793156,
+        "adf_tstat": -8.046214990876534,
+        "pf": 6.198197776652896
+      }
+    },
+    {
+      "symbol_a": "VET/USDT:USDT",
+      "symbol_b": "INJ/USDT:USDT",
+      "beta": 1.0249750946812697,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9892626416334848,
+      "metrics": {
+        "corr": 0.9856145417062567,
+        "r2": 0.9714360248276822,
+        "adf_tstat": -5.364708111069423,
+        "pf": 28.615213250519794
+      }
+    },
+    {
+      "symbol_a": "BTC/USDT:USDT",
+      "symbol_b": "AAVE/USDT:USDT",
+      "beta": 1.8200168875619456,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9892305172251736,
+      "metrics": {
+        "corr": 0.985571293778122,
+        "r2": 0.9713507751225727,
+        "adf_tstat": -5.656741924628298,
+        "pf": 4.188391112578634
+      }
+    },
+    {
+      "symbol_a": "ADA/USDT:USDT",
+      "symbol_b": "AVAX/USDT:USDT",
+      "beta": 1.176339058007867,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9889876544036192,
+      "metrics": {
+        "corr": 0.9932758265289511,
+        "r2": 0.9865968675680238,
+        "adf_tstat": -3.904311694070009,
+        "pf": 5.369729394672179
+      }
+    },
+    {
+      "symbol_a": "AVAX/USDT:USDT",
+      "symbol_b": "OP/USDT:USDT",
+      "beta": 0.9554058159202689,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.988942951511056,
+      "metrics": {
+        "corr": 0.9851840983666971,
+        "r2": 0.9705877076775271,
+        "adf_tstat": -4.8966100224799405,
+        "pf": 10.058880244385003
+      }
+    },
+    {
+      "symbol_a": "AVAX/USDT:USDT",
+      "symbol_b": "GALA/USDT:USDT",
+      "beta": 1.0237689087597472,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9888804214843678,
+      "metrics": {
+        "corr": 0.9850998908945183,
+        "r2": 0.9704217950429529,
+        "adf_tstat": -7.591521173877725,
+        "pf": 5.779745848399564
+      }
+    },
+    {
+      "symbol_a": "DOGE/USDT:USDT",
+      "symbol_b": "1000FLOKI/USDT:USDT",
+      "beta": 1.5984312847415816,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9887548092233378,
+      "metrics": {
+        "corr": 0.9849307178742424,
+        "r2": 0.970088519019109,
+        "adf_tstat": -6.9891422057634065,
+        "pf": 4.175598840731614
+      }
+    },
+    {
+      "symbol_a": "LINK/USDT:USDT",
+      "symbol_b": "SAND/USDT:USDT",
+      "beta": 0.9361914356442627,
+      "z_entry": 2.0,
+      "z_exit": 0.5,
+      "z_stop": 3.0,
+      "score": 0.9885298251665324,
+      "metrics": {
+        "corr": 0.9846276639821006,
+        "r2": 0.969491636684029,
+        "adf_tstat": -5.368162461389132,
+        "pf": 3.525633509018069
+      }
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 全局样式 */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-bg-primary text-text-primary min-h-screen;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-bg-secondary;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-border rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-text-muted;
+}
+
+/* 数字字体 */
+.font-mono {
+  font-family: 'Roboto Mono', monospace;
+}
+
+/* 动画 */
+@keyframes flash {
+  0%, 100% { background-color: transparent; }
+  50% { background-color: rgba(0, 200, 83, 0.1); }
+}
+
+.animate-flash {
+  animation: flash 0.5s ease-in-out;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+/* 骨架屏 */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #1C2128 25%, #2D3748 50%, #1C2128 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}

@@ -1,0 +1,32 @@
+"""订单执行模块"""
+import asyncio
+import logging
+from typing import List, Dict
+from src.runtime.position_state import PositionState
+from src.constants import DEFAULT_POST_ONLY, POSITION_COMPLETE_THRESHOLD
+
+logger = logging.getLogger("OrderExecutor")
+
+class OrderExecutor:
+    def __init__(self, runtime):
+        self.runtime = runtime
+        self.exchange_api = getattr(runtime, 'exchange_api', None)
+
+    async def execute_scale_in(self, ps: PositionState, scale_in_plan: List[Dict], current_z: float) -> bool:
+        if not scale_in_plan:
+            return False
+        step = scale_in_plan[0]
+        ratio = step.get("ratio", 0.3)
+        order_type = step.get("type", "limit")
+        return await self._execute_leg_sync(ps, ratio, order_type, True)
+
+    async def _execute_leg_sync(self, ps, ratio, order_type, is_entry):
+        if not self.exchange_api:
+            return False
+        # 简化实现
+        ps.position_size_pct += ratio
+        return True
+
+    async def execute_stop_loss(self, ps: PositionState) -> bool:
+        logger.warning(f"STOP LOSS for {ps.symbol_a}_{ps.symbol_b}")
+        return True

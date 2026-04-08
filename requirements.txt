@@ -1,0 +1,7 @@
+ccxt>=4.0.0
+numpy>=1.24,<2.1
+pandas>=2.0
+pyyaml>=6.0
+aiohttp>=3.8
+pytest>=7.0
+numba>=0.58

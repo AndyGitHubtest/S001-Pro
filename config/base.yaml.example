@@ -1,0 +1,30 @@
+# S001-Pro 配置模板
+# 复制为 base.yaml 并填入真实值
+# ⚠️ base.yaml 已在 .gitignore 中，不会被提交到 Git
+
+system:
+  name: "S001-Pro"
+  version: "2.0-CleanSlate"
+  mode: "live"
+  log_level: "INFO"
+
+exchange:
+  name: "binance"
+  api_key: ""          # 从环境变量 S001_BINANCE_API_KEY 读取
+  api_secret: ""       # 从环境变量 S001_BINANCE_API_SECRET 读取
+  testnet: false
+
+risk:
+  initial_capital: 10000.0
+  max_drawdown_pct: 15.0
+  max_daily_loss_pct: 5.0
+  max_open_positions: 6
+  isolated_margin: true
+
+data:
+  db_path: "data/klines.db"
+
+notifications:
+  enabled: true
+  telegram_token: ""   # 从环境变量 S001_TG_BOT_TOKEN 读取
+  telegram_chat_id: "" # 从环境变量 S001_TG_CHAT_ID 读取

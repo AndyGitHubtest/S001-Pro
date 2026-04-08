@@ -1,0 +1,49 @@
+system:
+  name: "S001-Pro"
+  version: "2.0-CleanSlate"
+  mode: "live"
+  log_level: "INFO"
+
+exchange:
+  name: "binance"
+  api_key: "0cmx1MUjUpuMmZ3OFCAh6QCTWdPHKrs8unwwWVp6phRxRuLGry4zENOWlEZMeDiM"
+  api_secret: "ofeKKmTUqUzvzwNsAUuoOvplkFOpsgjtdgf4ptI1pMwNnsqZRiLRaBA9dVcf6JGr"
+  testnet: false
+
+risk:
+  initial_capital: 1082.89
+  max_drawdown_pct: 15.0
+  max_daily_loss_pct: 5.0
+  max_open_positions: 6
+  position_size_usdt: 50.0
+  leverage: 5
+  isolated_margin: true
+
+# 信号参数默认值 (消除魔法数字)
+signal:
+  default_z_entry: 2.5
+  default_z_exit: 1.0
+  default_z_stop: 3.5
+  min_z_entry: 1.5
+  max_z_entry: 5.0
+
+# 仓位分配默认值
+allocation:
+  default_max_position_value_usd: 5000.0
+  max_position_value_usd_limit: 10000.0
+
+# 执行参数
+execution:
+  position_complete_threshold: 0.99
+  position_empty_threshold: 0.01
+  default_post_only: true
+  rollback_timeout_seconds: 30
+
+data:
+  db_path: "data/klines.db"
+
+notifications:
+  enabled: true
+  telegram_bot_token: "8707367889:AAHNXkiRqdRDROJpaSeNKodZuDArmLSdFME"
+  telegram_chat_id: "7507264354"
+  alert_level: "ERROR"
