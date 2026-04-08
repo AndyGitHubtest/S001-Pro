@@ -370,8 +370,8 @@ class M3SelectorBase(ABC):
         # 按评分排序
         results.sort(key=lambda x: x['score'], reverse=True)
         
-        # 单币互斥限制：每个币种最多出现在1个配对中（最严格模式）
-        MAX_SYMBOL_APPEARANCE = 1  # 用户设定：单币最多1个配对
+        # 单币互斥限制：每个币种最多出现在2个配对中（平衡模式）
+        MAX_SYMBOL_APPEARANCE = 2  # 用户设定：单币最多2个配对
         filtered = []
         coin_counts = {}
         
