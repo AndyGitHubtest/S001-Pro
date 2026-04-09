@@ -25,6 +25,12 @@ from typing import Dict, Optional, List
 # 确保项目根目录在 path 中
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+# 导入自诊断模块
+from src.diagnostics import (
+    diag_step, diag_state, diag_error, diag_progress, diag_timeout,
+    DiagTimer, ProgressTracker, enable_diagnostics
+)
+
 from src.data_engine import DataEngine
 from src.filters.initial_filter import InitialFilter
 from src.m3_selector import M3Selector
@@ -71,25 +77,33 @@ def run_scan_and_optimize(
     import time as _time
     _t0 = _time.time()
     logger = logging.getLogger("Pipeline")
+    
+    diag_step(1, "开始扫描优化流水线", db_path=db_path, min_vol=min_vol)
     logger.info("=" * 60)
     logger.info("PHASE A: Scan & Optimization Pipeline Starting")
     logger.info("=" * 60)
 
     # M1: Data Engine
+    diag_step(2, "初始化数据引擎")
     logger.info("[M1] Initializing DataEngine...")
     engine = DataEngine(db_path)
     all_symbols = engine.get_all_symbols(interval="1m")
+    diag_state("total_symbols", len(all_symbols))
     logger.info(f"[M1] Found {len(all_symbols)} symbols in database")
 
     # M1: Load market stats
+    diag_step(3, "加载市场统计")
     logger.info("[M1] Loading market stats...")
     market_stats = engine.load_market_stats(min_vol=min_vol)
+    diag_state("qualified_by_volume", len(market_stats))
     logger.info(f"[M1] {len(market_stats)} symbols meet liquidity filter (>{min_vol/1e6:.0f}M)")
 
     # M2: Initial Filter
+    diag_step(4, "执行初筛过滤")
     logger.info("[M2] Running Initial Filter (6-layer pipeline)...")
     initial_filter = InitialFilter()
     qualified = initial_filter.run(list(market_stats.keys()), market_stats)
+    diag_state("passed_m2_filter", len(qualified))
     logger.info(f"[M2] {len(qualified)} symbols passed all 6 filters")
 
     if len(qualified) < 2:
@@ -98,9 +112,11 @@ def run_scan_and_optimize(
         elapsed = _time.time() - _t0
         return ([], 0, elapsed)
 
+    diag_step(3, "构建Hot Pool数据池", symbol_count=len(qualified))
     # M1: Build Hot Pool
     logger.info("[M1] Building Hot Pool (5000 bars per symbol)...")
     hot_pool = engine.build_hot_pool(qualified, limit=5000)
+    diag_state("hot_pool_size", len(hot_pool))
     logger.info(f"[M1] Hot Pool built for {len(hot_pool)} symbols")
 
     # M1: Batch load 90d historical data
@@ -118,6 +134,7 @@ def run_scan_and_optimize(
     logger.info(f"[M1] Historical cache: {len(hist_cache)} symbols")
 
     # M3: Multi-Timeframe Selector (三周期独立运行)
+    diag_step(5, "执行M3配对精选")
     logger.info("[M3] Running M3 Multi-Timeframe Selector (1m/5m/15m)...")
     m3_selector = M3Selector()  # 默认不限制数量，所有通过筛选的都进入M4
     
@@ -125,6 +142,8 @@ def run_scan_and_optimize(
     m3_results = m3_selector.run_all(qualified, hot_pool)
     
     total_m3 = sum(len(v) for v in m3_results.values())
+    diag_state("m3_results", {"1m": len(m3_results['1m']), "5m": len(m3_results['5m']), 
+                               "15m": len(m3_results['15m']), "total": total_m3})
     logger.info(f"[M3] Results: 1m={len(m3_results['1m'])}, 5m={len(m3_results['5m'])}, 15m={len(m3_results['15m'])}, total={total_m3}")
     
     if total_m3 == 0:
@@ -134,25 +153,32 @@ def run_scan_and_optimize(
         return ({}, len(qualified), elapsed)
     
     # M4: Optimizer (每个周期独立优化)
+    diag_step(6, "执行M4参数优化")
     logger.info("[M4] Running Parameter Optimizer for each timeframe...")
     optimizer = ParamOptimizer()
     
     all_whitelists = {}
-    for timeframe in ['1m', '5m', '15m']:
-        candidates = m3_results[timeframe]
-        if not candidates:
-            logger.info(f"[M4] {timeframe}: no candidates to optimize")
-            continue
-            
-        logger.info(f"[M4] {timeframe}: optimizing {len(candidates)} pairs...")
-        whitelist = optimizer.run(candidates, get_historical_data_fn=engine.get_historical_data)
-        all_whitelists[timeframe] = whitelist
-        logger.info(f"[M4] {timeframe}: {len(whitelist)} pairs optimized")
+    with ProgressTracker(total=3, operation="M4优化", report_every=1) as pt:
+        for timeframe in ['1m', '5m', '15m']:
+            candidates = m3_results[timeframe]
+            if not candidates:
+                logger.info(f"[M4] {timeframe}: no candidates to optimize")
+                pt.update()
+                continue
+                
+            logger.info(f"[M4] {timeframe}: optimizing {len(candidates)} pairs...")
+            whitelist = optimizer.run(candidates, get_historical_data_fn=engine.get_historical_data)
+            all_whitelists[timeframe] = whitelist
+            diag_state(f"m4_{timeframe}_optimized", len(whitelist))
+            logger.info(f"[M4] {timeframe}: {len(whitelist)} pairs optimized")
+            pt.update()
     
     total_m4 = sum(len(v) for v in all_whitelists.values())
+    diag_state("total_m4_optimized", total_m4)
     logger.info(f"[M4] Total optimized: {total_m4} pairs")
 
     # M5: Persistence (保存所有周期的结果)
+    diag_step(7, "保存M5结果")
     logger.info("[M5] Saving results to config/pairs_multi_timeframe.json...")
     persistence = Persistence()
     git_hash = _get_git_hash()
@@ -172,6 +198,7 @@ def run_scan_and_optimize(
         with open("config/pairs_multi_timeframe.json", 'w') as f:
             json.dump(combined_results, f, indent=2)
         logger.info(f"[M5] Saved multi-timeframe results successfully")
+        diag_state("saved_multi_timeframe", True)
         
         # 同时保存兼容性格式（取5m作为主要输出）
         if '5m' in all_whitelists and all_whitelists['5m']:
@@ -186,9 +213,11 @@ def run_scan_and_optimize(
                     logger.info(f"     {p['symbol_a']} <-> {p['symbol_b']} | Score={p.get('score', 0):.3f}")
                     
     except Exception as e:
+        diag_error("M5保存结果", e, combined_results_count=len(combined_results))
         logger.error(f"[M5] Failed to save results: {e}")
 
     elapsed = _time.time() - _t0
+    diag_step(8, "扫描优化流水线完成", total_pairs=total_m4, elapsed_sec=f"{elapsed:.1f}")
     engine.close()
     logger.info(f"Pipeline complete: {total_m4} pairs across 3 timeframes, {elapsed:.0f}s")
     return (all_whitelists, total_m3, elapsed)
@@ -430,6 +459,10 @@ class TradingSystem:
         scan_interval_hours: float = 1.0,  # 每小时扫描一次
         check_interval_sec: float = 1.0,
     ):
+        # 启用诊断系统
+        enable_diagnostics(True)
+        diag_step(1, "初始化交易系统", mode="DRY_RUN" if dry_run else "LIVE")
+        
         self.db_path = db_path
         self.dry_run = dry_run
         self.scan_interval_hours = scan_interval_hours
@@ -441,6 +474,8 @@ class TradingSystem:
         # 初始化模块 (必须在setup_signal_handlers之前)
         self.logger_manager = setup_logging(log_dir)
         self.logger = logging.getLogger("TradingSystem")
+        
+        diag_step(2, "加载配置管理器")
         self.config_manager = load_config(config_dir)
         
         # 信号处理 (依赖config_manager)

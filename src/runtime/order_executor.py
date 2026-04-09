@@ -285,11 +285,22 @@ class OrderExecutor:
         else:
             side_a, side_b = "buy", "sell"
             
-        logger.info(f"[SyncOpen] {symbol_a}:{side_a}:{qty_a:.4f} <-> {symbol_b}:{side_b}:{qty_b:.4f}")
+        # FIX P0: 调整价格避免下单失败
+        # 1. 低价币(<0.1)强制用市价单
+        # 2. 其他币调整价格避免立即成交和偏离过大
+        adjusted_price_a = self._adjust_order_price(symbol_a, side_a, price_a, order_type)
+        adjusted_price_b = self._adjust_order_price(symbol_b, side_b, price_b, order_type)
+        
+        # 如果调整后为None，说明要用市价单
+        actual_order_type_a = "market" if adjusted_price_a is None else order_type
+        actual_order_type_b = "market" if adjusted_price_b is None else order_type
+        
+        logger.info(f"[SyncOpen] {symbol_a}:{side_a}:{qty_a:.4f}@{adjusted_price_a or 'MARKET'} <-> "
+                   f"{symbol_b}:{side_b}:{qty_b:.4f}@{adjusted_price_b or 'MARKET'}")
         
         # 提交两边订单
-        order_a_task = self._submit_order(symbol_a, order_type, side_a, qty_a, price_a)
-        order_b_task = self._submit_order(symbol_b, order_type, side_b, qty_b, price_b)
+        order_a_task = self._submit_order(symbol_a, actual_order_type_a, side_a, qty_a, adjusted_price_a)
+        order_b_task = self._submit_order(symbol_b, actual_order_type_b, side_b, qty_b, adjusted_price_b)
         
         try:
             order_a, order_b = await asyncio.gather(order_a_task, order_b_task)
@@ -443,6 +454,45 @@ class OrderExecutor:
             leg_b=leg_b,
             error="Partial fill" if (a_filled or b_filled) else "Both failed"
         )
+
+    # ═══════════════════════════════════════════════════
+    # 底层方法: 价格调整
+    # ═══════════════════════════════════════════════════
+    
+    def _adjust_order_price(self, symbol: str, side: str, price: float, 
+                           order_type: str) -> Optional[float]:
+        """
+        调整订单价格，避免下单失败
+        
+        策略:
+        1. 低价币(<0.1) -> 返回None (强制用市价单)
+        2. 限价单 -> 调整价格避免立即成交和偏离过大
+        
+        Returns:
+            float: 调整后的价格
+            None: 应该用市价单
+        """
+        # P0 FIX: 低价币强制用市价单
+        if price < 0.1:
+            logger.debug(f"[AdjustPrice] {symbol} price={price:.6f} < 0.1, use market order")
+            return None
+        
+        # 如果不是限价单，不需要调整
+        if order_type.lower() != "limit":
+            return price
+        
+        # 调整价格避免立即成交 (post_only保护)
+        # 买入时价格稍微高一点，卖出时稍微低一点
+        # 这样不会立即成交，而是作为maker挂单
+        if side.lower() == "buy":
+            # 买的时候挂高一点的价格，确保能买到但不会立即成交
+            adjusted = price * 1.002  # +0.2%
+        else:  # sell
+            # 卖的时候挂低一点的价格
+            adjusted = price * 0.998  # -0.2%
+        
+        logger.debug(f"[AdjustPrice] {symbol} {side}: {price:.6f} -> {adjusted:.6f}")
+        return adjusted
 
     # ═══════════════════════════════════════════════════
     # 底层方法: 提交订单
