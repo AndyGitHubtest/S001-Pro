@@ -31,21 +31,21 @@ class M3SelectorBase(ABC):
         self.top_n = top_n
         self.logger = logging.getLogger(f"M3Selector.{timeframe}")
         
-        # 筛选阈值（子类可覆盖）
+        # 筛选阈值（子类可覆盖）- 2026-04-09: 放宽标准以增加配对数量
         self.thresholds = {
-            # 结构稳定性
-            'min_correlation': 0.3,          # 最低相关系数
-            'max_corr_std': 0.2,             # 相关系数标准差上限
-            'coint_pvalue': 0.1,             # 协整性p值上限
-            'adf_pvalue': 0.1,               # ADF检验p值上限
-            
-            # 均值回归能力
-            'max_half_life': 30,             # 半衰期上限（bar数）
-            'min_zscore_range': 2.0,         # Z-score最小范围
-            
-            # 交易性
+            # 结构稳定性 - 放宽
+            'min_correlation': 0.25,         # 最低相关系数: 0.3 -> 0.25
+            'max_corr_std': 0.25,            # 相关系数标准差上限: 0.2 -> 0.25
+            'coint_pvalue': 0.15,            # 协整性p值上限: 0.1 -> 0.15
+            'adf_pvalue': 0.15,              # ADF检验p值上限: 0.1 -> 0.15
+
+            # 均值回归能力 - 放宽
+            'max_half_life': 40,             # 半衰期上限: 30 -> 40
+            'min_zscore_range': 1.8,         # Z-score最小范围: 2.0 -> 1.8
+
+            # 交易性 - 保持
             'min_daily_volume': 2_000_000,   # 最低日成交量(USDT)
-            'max_spread_volatility': 0.05,   # 价差波动率上限
+            'max_spread_volatility': 0.06,   # 价差波动率上限: 0.05 -> 0.06
         }
     
     @abstractmethod
