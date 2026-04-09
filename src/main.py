@@ -556,6 +556,7 @@ class TradingSystem:
 
         try:
             scan_counter = 0
+            results = None  # FIX: 初始化results变量
             while True:
                 scan_counter += 1
                 
