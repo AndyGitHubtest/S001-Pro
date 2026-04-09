@@ -210,23 +210,39 @@ class DiagTimer:
 
 
 class ProgressTracker:
-    """进度追踪器"""
+    """进度追踪器 - 支持上下文管理器"""
     
     def __init__(self, total: int, operation: str, report_every: int = 10):
         self.total = total
         self.operation = operation
         self.report_every = report_every
         self.current = 0
-        self.start_time = time.time()
+        self.start_time = None
         self.module = None
         self.lineno = None
-        
+    
+    def __enter__(self):
+        """进入上下文"""
         frame = sys._getframe(1)
         self.module = frame.f_globals.get('__name__', 'unknown')
         self.lineno = frame.f_lineno
+        self.start_time = time.time()
         
         prefix = _format_prefix(self.module, self.lineno)
-        logging.info(f"{prefix} [PROGRESS_START] {operation} 总数={total}")
+        logging.info(f"{prefix} [PROGRESS_START] {self.operation} 总数={self.total}")
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """退出上下文"""
+        elapsed = time.time() - self.start_time
+        prefix = _format_prefix(self.module, self.lineno)
+        
+        if exc_type:
+            logging.error(f"{prefix} [PROGRESS_FAIL] {self.operation}: {exc_type.__name__}")
+        else:
+            logging.info(f"{prefix} [PROGRESS_END] {self.operation} 完成 {self.current}/{self.total} in {elapsed:.3f}s")
+        
+        return False  # 不吞异常
     
     def update(self, increment: int = 1, **metrics):
         """更新进度"""
@@ -246,12 +262,6 @@ class ProgressTracker:
                 avg=f"{avg_time*1000:.1f}ms",
                 **metrics
             )
-    
-    def finish(self):
-        """完成进度"""
-        elapsed = time.time() - self.start_time
-        prefix = _format_prefix(self.module, self.lineno)
-        logging.info(f"{prefix} [PROGRESS_END] {self.operation} 完成 {self.current}/{self.total} in {elapsed:.3f}s")
 
 
 # 装饰器版本
@@ -290,7 +300,7 @@ def configure_diagnostics(**kwargs):
 # 便捷的grep搜索关键词
 def print_diag_help():
     """打印诊断帮助信息"""
-    help_text = """
+    help_text = r"""
     ╔══════════════════════════════════════════════════════════════╗
     ║              S001-Pro 自诊断系统 - 搜索指南                    ║
     ╚══════════════════════════════════════════════════════════════╝
