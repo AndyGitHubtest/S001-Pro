@@ -470,6 +470,9 @@ class TradingSystem:
         
         # FIX BUG-007: SIGTERM优雅退出标志
         self._shutdown_requested = False
+        
+        # FIX BUG-010: 保存主事件循环引用，用于线程安全的热重载
+        self._main_loop = None
 
         # 初始化模块 (必须在setup_signal_handlers之前)
         self.logger_manager = setup_logging(log_dir)
@@ -528,6 +531,10 @@ class TradingSystem:
 
     async def run(self):
         """主循环: 周期扫描 + 持续监控"""
+        # FIX BUG-010: 保存主事件循环引用
+        import asyncio
+        self._main_loop = asyncio.get_running_loop()
+        
         self.logger.info("S001-Pro Trading System Starting...")
         self.logger.info(f"Mode: {'DRY RUN' if self.dry_run else 'LIVE'}")
         self.logger.info(f"Capital: ${self.capital:,.0f}")
@@ -751,20 +758,20 @@ class TradingSystem:
         self.logger.info("Shutdown complete")
 
     def _on_config_change(self, event_type: str, data: Dict):
-        """热重载回调 - FIX: 在线程中安全地调度协程"""
+        """热重载回调 - FIX BUG-010: 在线程中安全地调度协程"""
         if event_type == "pairs_updated":
             self.logger.info(f"ConfigManager: pairs updated, reloading Runtime...")
-            # FIX: 使用 run_coroutine_threadsafe 在线程中安全调度协程
+            # FIX BUG-010: 使用保存的主事件循环引用，避免在线程中调用 get_running_loop()
             import asyncio
-            try:
-                loop = asyncio.get_running_loop()
+            if self._main_loop is not None:
                 asyncio.run_coroutine_threadsafe(
                     self.runtime.handle_hot_reload(data), 
-                    loop
+                    self._main_loop
                 )
-            except RuntimeError:
-                # 如果没有运行中的事件循环，记录错误
-                self.logger.error("Cannot schedule hot reload: no running event loop")
+                self.logger.info("Hot reload scheduled successfully")
+            else:
+                # 主循环尚未初始化，记录警告
+                self.logger.warning("Cannot schedule hot reload: main loop not initialized yet")
 
 
 def main():
