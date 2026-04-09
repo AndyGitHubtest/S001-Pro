@@ -267,9 +267,12 @@ class ExchangeApi:
         if reduce_only:
             params['reduceOnly'] = True
 
-        # FIX P0: 同步 ccxt 调用包装为异步, 不阻塞事件循环
+        # FIX P0: 市价单不传price参数，限价单才传
         def _do_order():
-            return client.create_order(symbol, order_type, side, qty, price, params)
+            if order_type.lower() == 'market':
+                return client.create_order(symbol, order_type, side, qty, None, params)
+            else:
+                return client.create_order(symbol, order_type, side, qty, price, params)
 
         try:
             order = await asyncio.to_thread(_do_order)
