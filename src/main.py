@@ -563,7 +563,9 @@ class TradingSystem:
 
         try:
             scan_counter = 0
-            results = None  # FIX: 初始化results变量
+            results = None
+            total_cands = 0
+            scan_elapsed = 0
             while True:
                 scan_counter += 1
                 
@@ -585,9 +587,13 @@ class TradingSystem:
                     except asyncio.TimeoutError:
                         self.logger.error("[TIMEOUT] 扫描超时(10分钟)，跳过本次扫描")
                         results = None
+                        total_cands = 0
+                        scan_elapsed = 0
                     except Exception as e:
                         self.logger.error(f"[ERROR] 扫描失败: {e}")
                         results = None
+                        total_cands = 0
+                        scan_elapsed = 0
 
                 if results:
                     # Push Top 30 to Telegram
