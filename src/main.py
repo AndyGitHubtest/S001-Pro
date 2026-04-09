@@ -733,12 +733,20 @@ class TradingSystem:
         self.logger.info("Shutdown complete")
 
     def _on_config_change(self, event_type: str, data: Dict):
-        """热重载回调"""
+        """热重载回调 - FIX: 在线程中安全地调度协程"""
         if event_type == "pairs_updated":
             self.logger.info(f"ConfigManager: pairs updated, reloading Runtime...")
-            # FIX: 使用 asyncio.create_task 正确调度协程
+            # FIX: 使用 run_coroutine_threadsafe 在线程中安全调度协程
             import asyncio
-            asyncio.create_task(self.runtime.handle_hot_reload(data))
+            try:
+                loop = asyncio.get_running_loop()
+                asyncio.run_coroutine_threadsafe(
+                    self.runtime.handle_hot_reload(data), 
+                    loop
+                )
+            except RuntimeError:
+                # 如果没有运行中的事件循环，记录错误
+                self.logger.error("Cannot schedule hot reload: no running event loop")
 
 
 def main():
