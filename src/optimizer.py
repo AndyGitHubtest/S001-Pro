@@ -39,7 +39,7 @@ IS_RATIO = 0.81             # IS/OS 切分比例 (前 67% 训练, 后 33% 验证
 MIN_TRADES_HARD_GATE = 10   # 硬门槛: 90天最少交易数
 MAX_DD_HARD_GATE = 0.20     # 硬门槛: 最大回撤
 MIN_PF_HARD_GATE = 1.5      # 硬门槛: 最小盈利因子 (亏1必赚1.5)
-MIN_PF_OS_GATE = 1.5        # OS 验证门槛: PF>=1.5 才放行 (只保留有利润的)
+MIN_PF_OS_GATE = 1.0        # OS 验证门槛: PF>=1.0 才放行 (放宽标准,只要盈利即可)
 COST_PER_LEG = 0.0005       # 单腿成本 (手续费0.05% + 滑点0.05%)
 COST_ROUND_TRIP = COST_PER_LEG * 4  # 4腿总成本 = 0.2%
 
@@ -346,7 +346,7 @@ def _optimize_single_pair(args):
         return None
 
     # ═══════════════════════════════════════════════════
-    # OS 计算: 仅作为参考, 不用于淘汰 (2026-04-09 取消OS验证)
+    # OS 验证: 用最优参数跑 OS 数据, PF<1.0 淘汰 (门槛已放宽)
     # ═══════════════════════════════════════════════════
     os_stats = PairBacktester.run(
         log_a_os, log_b_os, beta,
@@ -354,12 +354,16 @@ def _optimize_single_pair(args):
         early_abort=False
     )
 
-    # OS统计仅用于记录, 不参与筛选决策
-    os_pf = os_stats.get('profit_factor', 0) if os_stats else 0
+    if os_stats is None:
+        return None
+
+    os_pf = os_stats.get('profit_factor', 0)
+    if os_pf < MIN_PF_OS_GATE:
+        return None
 
     logger.info(f"Optimizer: {sym_a}/{sym_b} Score={best_score:.3f} Params={best_params} "
                f"IS:PF={best_is_stats.get('profit_factor',0):.2f} DD={best_is_stats.get('max_drawdown',0):.1%} N={best_is_stats.get('n_trades',0)} | "
-               f"OS:PF={os_pf:.2f}(参考)")
+               f"OS:PF={os_pf:.2f} DD={os_stats.get('max_drawdown',0):.1%} N={os_stats.get('n_trades',0)}")
 
     return {
         'symbol_a': sym_a,
@@ -379,12 +383,12 @@ def _optimize_single_pair(args):
             'net_profit': best_is_stats.get('net_profit', 0),
         },
         'os_stats': {
-            'profit_factor': os_stats.get('profit_factor', 0) if os_stats else 0,
-            'max_drawdown': os_stats.get('max_drawdown', 0) if os_stats else 0,
-            'n_trades': os_stats.get('n_trades', 0) if os_stats else 0,
-            'win_rate': os_stats.get('win_rate', 0) if os_stats else 0,
-            'sharpe': os_stats.get('sharpe', 0) if os_stats else 0,
-            'net_profit': os_stats.get('net_profit', 0) if os_stats else 0,
+            'profit_factor': os_stats.get('profit_factor', 0),
+            'max_drawdown': os_stats.get('max_drawdown', 0),
+            'n_trades': os_stats.get('n_trades', 0),
+            'win_rate': os_stats.get('win_rate', 0),
+            'sharpe': os_stats.get('sharpe', 0),
+            'net_profit': os_stats.get('net_profit', 0),
         },
     }
 
