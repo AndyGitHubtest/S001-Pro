@@ -268,8 +268,9 @@ class ExchangeApi:
             params['reduceOnly'] = True
 
         # FIX P0: 市价单不传price参数，限价单才传
+        # FIX P1: 低价币(价格<0.1)强制用市价单，避免Limit price too low错误
         def _do_order():
-            if order_type.lower() == 'market':
+            if order_type.lower() == 'market' or (price is not None and price < 0.1):
                 return client.create_order(symbol, order_type, side, qty, None, params)
             else:
                 return client.create_order(symbol, order_type, side, qty, price, params)
