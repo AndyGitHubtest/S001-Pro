@@ -555,16 +555,33 @@ class TradingSystem:
         self.config_manager.watch_config(self._on_config_change)
 
         try:
+            scan_counter = 0
             while True:
-                # A. 周期扫描优化
-                self.logger.info(f"Running scan & optimization (every {self.scan_interval_hours}h)...")
-                # FIX: 在线程中运行同步扫描函数，避免阻塞事件循环
-                results, total_cands, scan_elapsed = await asyncio.to_thread(
-                    run_scan_and_optimize, self.db_path
-                )
+                scan_counter += 1
+                
+                # FIX P0: 跳过首次扫描，直接使用现有配置
+                # 原因: run_scan_and_optimize 会卡住导致进程无响应
+                if scan_counter == 1:
+                    self.logger.info("[WORKAROUND] 首次启动跳过扫描，使用现有配对配置")
+                    self.logger.info(f"[WORKAROUND] 已加载 {len(self.config_manager.pairs_data.get('pairs', []))} 对配置")
+                else:
+                    # A. 周期扫描优化 (带超时保护)
+                    self.logger.info(f"Running scan & optimization (every {self.scan_interval_hours}h)...")
+                    try:
+                        # FIX: 添加10分钟超时，防止扫描卡住
+                        results, total_cands, scan_elapsed = await asyncio.wait_for(
+                            asyncio.to_thread(run_scan_and_optimize, self.db_path),
+                            timeout=600  # 10分钟超时
+                        )
+                        self.logger.info(f"Scan complete: {len(results)} pairs ready ({scan_elapsed:.0f}s, {total_cands} candidates)")
+                    except asyncio.TimeoutError:
+                        self.logger.error("[TIMEOUT] 扫描超时(10分钟)，跳过本次扫描")
+                        results = None
+                    except Exception as e:
+                        self.logger.error(f"[ERROR] 扫描失败: {e}")
+                        results = None
 
                 if results:
-                    self.logger.info(f"Scan complete: {len(results)} pairs ready ({scan_elapsed:.0f}s, {total_cands} candidates)")
                     # Push Top 30 to Telegram
                     _notif = self.config_manager.config.get("notifications", {})
                     _tg_token = _notif.get("telegram_bot_token", "")
