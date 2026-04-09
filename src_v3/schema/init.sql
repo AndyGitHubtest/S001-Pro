@@ -54,6 +54,7 @@ CREATE INDEX IF NOT EXISTS idx_m2_passed
 -- ═══════════════════════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS m3_scored_pairs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sequence_id INTEGER NOT NULL DEFAULT 1,  -- 批次序列号
     session_id TEXT NOT NULL,
     symbol_a TEXT NOT NULL,
     symbol_b TEXT NOT NULL,
@@ -89,6 +90,7 @@ CREATE INDEX IF NOT EXISTS idx_m3_pair
 -- ═══════════════════════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS m4_optimized_pairs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sequence_id INTEGER NOT NULL DEFAULT 1,
     session_id TEXT NOT NULL,
     m3_id INTEGER REFERENCES m3_scored_pairs(id),
     symbol_a TEXT,
@@ -129,6 +131,7 @@ CREATE INDEX IF NOT EXISTS idx_m4_score
 -- ═══════════════════════════════════════════════════════════════════════════════
 CREATE TABLE IF NOT EXISTS m5_trade_configs (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sequence_id INTEGER NOT NULL DEFAULT 1,
     session_id TEXT NOT NULL,
     pair_key TEXT UNIQUE NOT NULL,  -- "BAS/USDT_MON/USDT"
     symbol_a TEXT NOT NULL,
