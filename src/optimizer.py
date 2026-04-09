@@ -346,7 +346,7 @@ def _optimize_single_pair(args):
         return None
 
     # ═══════════════════════════════════════════════════
-    # OS 验证: 用最优参数跑 OS 数据, PF<1.0 淘汰
+    # OS 计算: 仅作为参考, 不用于淘汰 (2026-04-09 取消OS验证)
     # ═══════════════════════════════════════════════════
     os_stats = PairBacktester.run(
         log_a_os, log_b_os, beta,
@@ -354,16 +354,12 @@ def _optimize_single_pair(args):
         early_abort=False
     )
 
-    if os_stats is None:
-        return None
-
-    os_pf = os_stats.get('profit_factor', 0)
-    if os_pf < MIN_PF_OS_GATE:
-        return None
+    # OS统计仅用于记录, 不参与筛选决策
+    os_pf = os_stats.get('profit_factor', 0) if os_stats else 0
 
     logger.info(f"Optimizer: {sym_a}/{sym_b} Score={best_score:.3f} Params={best_params} "
                f"IS:PF={best_is_stats.get('profit_factor',0):.2f} DD={best_is_stats.get('max_drawdown',0):.1%} N={best_is_stats.get('n_trades',0)} | "
-               f"OS:PF={os_pf:.2f} DD={os_stats.get('max_drawdown',0):.1%} N={os_stats.get('n_trades',0)}")
+               f"OS:PF={os_pf:.2f}(参考)")
 
     return {
         'symbol_a': sym_a,
@@ -383,12 +379,12 @@ def _optimize_single_pair(args):
             'net_profit': best_is_stats.get('net_profit', 0),
         },
         'os_stats': {
-            'profit_factor': os_stats.get('profit_factor', 0),
-            'max_drawdown': os_stats.get('max_drawdown', 0),
-            'n_trades': os_stats.get('n_trades', 0),
-            'win_rate': os_stats.get('win_rate', 0),
-            'sharpe': os_stats.get('sharpe', 0),
-            'net_profit': os_stats.get('net_profit', 0),
+            'profit_factor': os_stats.get('profit_factor', 0) if os_stats else 0,
+            'max_drawdown': os_stats.get('max_drawdown', 0) if os_stats else 0,
+            'n_trades': os_stats.get('n_trades', 0) if os_stats else 0,
+            'win_rate': os_stats.get('win_rate', 0) if os_stats else 0,
+            'sharpe': os_stats.get('sharpe', 0) if os_stats else 0,
+            'net_profit': os_stats.get('net_profit', 0) if os_stats else 0,
         },
     }
 
