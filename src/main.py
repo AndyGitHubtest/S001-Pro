@@ -747,7 +747,12 @@ class TradingSystem:
     async def _shutdown(self):
         """优雅关闭"""
         self.logger.info("Shutting down...")
-        self.runtime.stop()
+        
+        # FIX: runtime.stop() 是协程，需要await
+        try:
+            await self.runtime.stop()
+        except Exception as e:
+            self.logger.error(f"Runtime: failed to stop: {e}")
 
         # FIX: 保存最终状态
         try:
